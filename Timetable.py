@@ -15,4 +15,7 @@ def get_first_buses(data_list):
     for ride in data_list:
         if ride[0] not in [next_ride[0] for next_ride in next_buses]:
             next_buses.append(ride)
-    return next_buses        
+    return next_buses
+
+def get_buses():
+    return get_first_buses(get_list())
