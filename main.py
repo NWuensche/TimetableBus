@@ -4,6 +4,8 @@ import Monitor
 import time
 
 def main():
+
+    # show bus lines every 30 seconds
     while True:
         Monitor.print_buses()
         time.sleep(30)

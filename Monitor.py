@@ -1,5 +1,6 @@
 import Timetable
 
+# print the bus lines on the monitor
 def print_buses():
     next_buses = Timeline.get_buses
     for ride in next_buses:

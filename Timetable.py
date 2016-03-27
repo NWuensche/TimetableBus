@@ -2,6 +2,7 @@ import json
 import urllib.request
 import ast
 
+# get the bus lines from the website and parse it to a list
 def get_list():
     url = 'http://widgets.vvo-online.de/abfahrtsmonitor/Abfahrten.do?ort=Dresden&hst=CasparDavidFriedrichStra%C3%9Fe'
     response = urllib.request.urlopen(url)
@@ -10,6 +11,7 @@ def get_list():
     data_list = ast.literal_eval(data_utf)
     return data_list
 
+# just store the first time a bus comes
 def get_first_buses(data_list):
     next_buses = []
     for ride in data_list:
@@ -17,5 +19,6 @@ def get_first_buses(data_list):
             next_buses.append(ride)
     return next_buses
 
+# return the first times, a bus line comes
 def get_buses():
     return get_first_buses(get_list())
