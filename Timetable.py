@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
 import json
-import urllib.request
+from urllib2 import Request as request
+import urllib2
 import ast
 
 # get the bus lines from the website and parse it to a list
-def get_list():
-    url = 'http://widgets.vvo-online.de/abfahrtsmonitor/Abfahrten.do?ort=Dresden&hst=CasparDavidFriedrichStra%C3%9Fe'
-    response = urllib.request.urlopen(url)
+def get_list(start):
+#    url = 'http://widgets.vvo-online.de/abfahrtsmonitor/Abfahrten.do?ort=Dresden&hst=CasparDavidFriedrichStra%C3%9Fe'
+    url = 'http://widgets.vvo-online.de/abfahrtsmonitor/Abfahrten.do?ort=Dresden&hst=' + start
+    req = request(url)
+    response = urllib2.urlopen(req)
     data_raw = response.read()
     data_utf = data_raw.decode("utf-8")
     data_list = ast.literal_eval(data_utf)
@@ -20,5 +24,5 @@ def get_first_buses(data_list):
     return next_buses
 
 # return the first times, a bus line comes
-def get_buses():
-    return get_first_buses(get_list())
+def get_buses(start):
+    return get_first_buses(get_list(start))
