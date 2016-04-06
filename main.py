@@ -18,6 +18,14 @@ c.setopt(c.HTTPHEADER, ['x-instapush-appid: ' + app_ID,
 'x-instapush-appsecret: ' + app_secret,
 'Content-Type: application/json'])
 
+#todoist
+api = todoist.TodoistAPI()
+user = api.login(Sensitive.e_mail, Sensitive.password)
+#response = api.sync(recource_types = ['all'])
+pushMessage = user['full_name']
+
+
+
 # create a dictionary structure for the JSON data to post to Instapush
 json_fields = {}
 
@@ -41,11 +49,28 @@ def change_push_message(pushMessage):
 	postfields = json.dumps(json_fields)
 	c.setopt(c.POSTFIELDS, postfields)
 
+def do_what_user_wants():
+	user = api.login(Sensitive.e_mail, Sensitive.password)
+	input_str = user['full_name']
+	input_tokens = input_str.split()
+	if input_tokens[0] == 'bus':
+		pushMessage = ''
+		start = "CasparDavidFriedrichStraße" # default value
+		if len(input_tokens) > 1:
+			start = input_tokens[1]
+		rides = Timetable.get_buses(start)	
+		for ride in rides:
+			pushMessage += "{line}: {time}Min, ".format(line = ride[0], time = ride[2])
+		change_push_message(pushMessage)
+		c.perform()
+		print("Message sent!\n")
+		
 
 # setup an indefinite loop that looks for the door to be opened / closed
 def main():
 	while True:
 		body= buffer.getvalue()
+		do_what_user_wants() # look for username 
 		# reset the buffer
 		buffer.truncate(0)
 		buffer.seek(0)
