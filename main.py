@@ -57,10 +57,16 @@ def do_what_user_wants():
         pushMessage = ''
         start = "CasparDavidFriedrichStraße" # default value
         if len(input_tokens) > 1:
-            start = input_tokens[1]
-        rides = Timetable.get_buses(start)
+        	start = input_tokens[1]
+        rides = Timetable.get_list(start)
+
+#        rides = Timetable.get_buses(start)
+        print(rides)
         for ride in rides:
-            pushMessage += "{line}: {time}Min, ".format(line = ride[0], time = ride[2])
+            pushMessage += "{line} to {destination}: {time}Min, \n"\
+                .format(line = ride[0], destination = ride[1], time = ride[2])
+
+        pushMessage = pushMessage[:-3] # delete last comma
         change_push_message(pushMessage)
         c.perform()
         print("Message sent!\n")
