@@ -3,7 +3,8 @@
 import time
 import pycurl, json
 import Timetable
-import todoist
+#import todoist
+from pytodoist.api import TodoistAPI
 import Sensitive
 
 from io import BytesIO as StringIO
@@ -19,10 +20,12 @@ c.setopt(c.HTTPHEADER, ['x-instapush-appid: ' + app_ID,
 'Content-Type: application/json'])
 
 #todoist
-api = todoist.TodoistAPI()
+#api = todoist.TodoistAPI()
+api = TodoistAPI()
 user = api.login(Sensitive.e_mail, Sensitive.password)
+user_info = user.json()
 #response = api.sync(recource_types = ['all'])
-pushMessage = user['full_name']
+pushMessage = user_info['full_name']
 
 
 
@@ -51,7 +54,8 @@ def change_push_message(pushMessage):
 
 def do_what_user_wants():
     user = api.login(Sensitive.e_mail, Sensitive.password)
-    input_str = user['full_name']
+    user_info = user.json()
+    input_str = user_info['full_name']
     input_tokens = input_str.split()
     if input_tokens[0] == 'bus':
         pushMessage = ''

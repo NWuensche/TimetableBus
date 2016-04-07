@@ -10,7 +10,7 @@ A program to send data from RasPi to Android Phone and vice versa
 1. first off, you have to install the Todoist API on your RasPi
 
     ``` bash
-    pip install todoist
+    pip install pytodoist
     ```
 
 2. Change the API stuff to the username and password of yours
