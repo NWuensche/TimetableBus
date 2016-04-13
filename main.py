@@ -52,25 +52,50 @@ def change_push_message(pushMessage):
     postfields = json.dumps(json_fields)
     c.setopt(c.POSTFIELDS, postfields)
 
+def filter_buses(rides, line):
+    filter_rides = []
+    for ride in rides:
+        if ride[0] == str(line):
+            filter_rides.append(ride)
+    return filter_rides
+
+
 def do_what_user_wants():
     user = api.login(Sensitive.e_mail, Sensitive.password)
     user_info = user.json()
     input_str = user_info['full_name']
     input_tokens = input_str.split()
     if input_tokens[0] == 'bus':
+        rides = []
         pushMessage = ''
-        start = "CasparDavidFriedrichStraße" # default value
+        is_bus_station = True # looks, if there are any buses at given station
+        start = "CasparDavidFriedrichStrasse" # default value
         if len(input_tokens) > 1:
-        	start = input_tokens[1]
-        rides = Timetable.get_list(start)
+    	    start = input_tokens[1]
+            start = start.encode('utf-8')
+            try:
+                rides = Timetable.get_list(start)
+                if rides == []:
+                    pushMessage = "No bus station " + input_tokens[1] +"!"
+                    is_bus_station = False
 
-#        rides = Timetable.get_buses(start)
+            except:
+                pushMessage = "No bus station " + input_tokens[1] +"!"
+                is_bus_station = False
+            if len(input_tokens) == 3 and is_bus_station:
+                rides = filter_buses(rides, input_tokens[2])
+                if rides == []:
+                    pushMessage = "No busline " + input_tokens[2] + " at "\
+                                + input_tokens[1] +"!"
+        else:
+            rides = Timetable.get_list(start)
         print(rides)
-        for ride in rides:
-            pushMessage += "{line} to {destination}: {time}Min, \n"\
-                .format(line = ride[0], destination = ride[1], time = ride[2])
+        if(pushMessage == ""):
+            for ride in rides:
+                pushMessage += "{line} to {destination}: {time}Min, \n"\
+                    .format(line = ride[0], destination = ride[1], time = ride[2])
 
-        pushMessage = pushMessage[:-3] # delete last comma
+            pushMessage = pushMessage[:-3] # delete last comma
         change_push_message(pushMessage)
         c.perform()
         print("Message sent!\n")
